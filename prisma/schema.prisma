@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Animal {
+  id              String            @id @default(cuid())
+  createdAt       DateTime          @default(now()) @map("created_at")
+  rehabilitado    Boolean           @default(false)
+  TipoAnimal      TipoAnimal        @relation(fields: [tipoAnimalId], references: [id])
+  tipoAnimalId    String            @map("tipo_animal_id")
+  MascotaAdoptada MascotaAdoptada[]
+  @@map("animal")
+}
+
+model TipoAnimal {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now()) @map("created_at")
+  description String
+  Animal      Animal[]
+  @@map("tipo_animal")
+}
+
+model Propietario {
+  id              String            @id @default(cuid())
+  createdAt       DateTime          @default(now()) @map("created_at")
+  nombre          String
+  email           String
+  MascotaAdoptada MascotaAdoptada[]
+  @@map("propietario")
+}
+
+model MascotaAdoptada {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now()) @map("created_at")
+  nombre        String
+  Animal        Animal      @relation(fields: [animalId], references: [id])
+  animalId      String      @map("animal_id")
+  Propietario   Propietario @relation(fields: [propietarioId], references: [id])
+  propietarioId String      @map("propietario_id")
+  @@map("mascota_adoptada")
+}
